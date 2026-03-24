@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../../../Utilities/CS_Utilities/Utils.csproj" />
+  <Project Path="MailVault.Worker.csproj" />
+</Solution>
