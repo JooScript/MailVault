@@ -1,7 +1,23 @@
-using MailVault;
+using MailVault.Worker;
 
-var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddHostedService<Worker>();
+var host = Host.CreateDefaultBuilder(args)
+    .UseWindowsService(o => o.ServiceName = "MailVault")
+    .ConfigureLogging(logging =>
+    {
+        logging.ClearProviders();
 
-var host = builder.Build();
-host.Run();
+        logging.AddConsole();
+
+        if (OperatingSystem.IsWindows())
+        {
+            logging.AddEventLog(s => s.SourceName = "MailVault");
+        }
+    })
+    .ConfigureServices((ctx, services) =>
+    {
+        services.Configure<AppConfig>(ctx.Configuration.GetSection("MailVault"));
+        services.AddHostedService<Worker>();
+    })
+    .Build();
+
+await host.RunAsync();
