@@ -64,6 +64,24 @@ Sensitive values such as passwords and tokens must NOT be placed in appsettings.
 
 ## appsettings.json (Safe Template)
 
+````json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "MailVault": {
+    "ImapPort": 993,
+    "BackupDir": "C:/MailVaultBackup",
+    "Mailboxes": [
+      "INBOX"
+    ],
+    "IntervalHours": 6,
+    "Owner": "your-github-user"
+  }
+}
 ```json
 {
   "Logging": {
@@ -84,7 +102,7 @@ Sensitive values such as passwords and tokens must NOT be placed in appsettings.
     "Owner": "your-github-user"
   }
 }
-```
+````
 
 ---
 
@@ -94,18 +112,20 @@ Use environment variables for all sensitive data.
 
 ### Mapping Rule
 
-```
+``` text
 Section:Key → Section__Key
 ```
 
 ### Required Variables
 
-| Config Key         | Environment Variable |
-| ------------------ | -------------------- |
-| MailVault:ImapUser | MailVault__ImapUser  |
-| MailVault:ImapPass | MailVault__ImapPass  |
-| MailVault:Token    | MailVault__Token     |
-| MailVault:Email    | MailVault__Email     |
+| Config Key          | Environment Variable |
+| ------------------- | -------------------- |
+| MailVault:ImapHost  | MailVault__ImapHost  |
+| MailVault:ImapUser  | MailVault__ImapUser  |
+| MailVault:ImapPass  | MailVault__ImapPass  |
+| MailVault:GitHubUrl | MailVault__GitHubUrl |
+| MailVault:Token     | MailVault__Token     |
+| MailVault:Email     | MailVault__Email     |
 
 ---
 
