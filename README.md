@@ -38,50 +38,34 @@ Main flow per cycle:
 
 ## External Dependency
 
-This project references:
-
 * [https://github.com/JooScript/CS_Utilities](https://github.com/JooScript/CS_Utilities)
 
 ---
 
 ## Configuration
 
-Configuration is loaded using the standard .NET configuration pipeline:
+Configuration is loaded using:
 
-1. appsettings.json
-2. appsettings.{Environment}.json
-3. **Environment Variables (recommended for secrets)**
+1. appsettings.json (non-sensitive only)
+2. Environment Variables (**all secrets**)
 
 ---
 
 ## ⚠️ Security Best Practice
 
-**Never store secrets in source control.**
+Never store secrets in source control.
 
-Sensitive values such as passwords and tokens must NOT be placed in appsettings.json.
+This includes:
+
+* IMAP host & credentials
+* GitHub repository URL
+* GitHub token
+* Email
 
 ---
 
 ## appsettings.json (Safe Template)
 
-````json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.Hosting.Lifetime": "Information"
-    }
-  },
-  "MailVault": {
-    "ImapPort": 993,
-    "BackupDir": "C:/MailVaultBackup",
-    "Mailboxes": [
-      "INBOX"
-    ],
-    "IntervalHours": 6,
-    "Owner": "your-github-user"
-  }
-}
 ```json
 {
   "Logging": {
@@ -91,24 +75,18 @@ Sensitive values such as passwords and tokens must NOT be placed in appsettings.
     }
   },
   "MailVault": {
-    "ImapHost": "imap.gmail.com",
     "ImapPort": 993,
-    "GitHubUrl": "https://github.com/your-user/your-backup-repo.git",
     "BackupDir": "C:/MailVaultBackup",
-    "Mailboxes": [
-      "INBOX"
-    ],
+    "Mailboxes": ["INBOX"],
     "IntervalHours": 6,
     "Owner": "your-github-user"
   }
 }
-````
+```
 
 ---
 
-## Environment Variables (Required for Secrets)
-
-Use environment variables for all sensitive data.
+## Environment Variables (All Sensitive Values)
 
 ### Mapping Rule
 
@@ -134,8 +112,10 @@ Section:Key → Section__Key
 ### Windows (Persistent)
 
 ```powershell
+setx MailVault__ImapHost "imap.gmail.com" /M
 setx MailVault__ImapUser "your-email@gmail.com" /M
 setx MailVault__ImapPass "your-app-password" /M
+setx MailVault__GitHubUrl "https://github.com/your-user/your-backup-repo.git" /M
 setx MailVault__Token "your-github-token" /M
 setx MailVault__Email "your-email@gmail.com" /M
 ```
@@ -144,36 +124,19 @@ Restart the service after setting variables.
 
 ---
 
-### Windows (Temporary Session)
-
-```powershell
-$env:MailVault__ImapUser="your-email@gmail.com"
-$env:MailVault__ImapPass="your-app-password"
-$env:MailVault__Token="your-github-token"
-```
-
----
-
 ### Linux / macOS
 
 ```bash
+export MailVault__ImapHost="imap.gmail.com"
 export MailVault__ImapUser="your-email@gmail.com"
 export MailVault__ImapPass="your-app-password"
+export MailVault__GitHubUrl="https://github.com/your-user/your-backup-repo.git"
 export MailVault__Token="your-github-token"
 ```
 
 ---
 
 ## Local Development
-
-### Prerequisites
-
-* .NET SDK 10+
-* Access to CS_Utilities project
-* IMAP credentials
-* GitHub repository + token
-
-### Run
 
 ```powershell
 cd .\Src\Worker
@@ -193,18 +156,9 @@ dotnet publish -c Release -r win-x64 --self-contained false -o .\publish\win
 
 ## Windows Service Hosting
 
-Install:
-
 ```powershell
 sc.exe create MailVault binPath= "C:\Path\To\MailVault.Worker.exe" start= auto
 sc.exe start MailVault
-```
-
-Remove:
-
-```powershell
-sc.exe stop MailVault
-sc.exe delete MailVault
 ```
 
 ---
@@ -216,34 +170,9 @@ sc.exe delete MailVault
 
 ---
 
-## Project Structure
-
-```text
-MailVault/
-├─ README.md
-└─ Src/
-   └─ Worker/
-      ├─ Program.cs
-      ├─ Worker.cs
-      ├─ AppConfig.cs
-      ├─ appsettings.json
-      └─ MailVault.Worker.csproj
-```
-
----
-
 ## Notes
 
-* Use environment variables for secrets
-* Rotate tokens immediately if exposed
-* Use app passwords for Gmail (not your main password)
-* Ensure IMAP is enabled for your email provider
-
----
-
-## Recommended Next Improvements
-
-* Add configuration validation on startup
-* Add retry policies for IMAP and Git operations
-* Add structured logging (Serilog)
-* Add health checks for monitoring
+* Use environment variables for all sensitive values
+* Rotate credentials if exposed
+* Use app passwords for Gmail
+* Ensure IMAP is enabled
