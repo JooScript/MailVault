@@ -9,7 +9,7 @@ MailVault is a background email backup worker that pulls messages from IMAP fold
 The service:
 
 * runs continuously as a .NET worker
-* checks mail on a fixed interval (currently every 6 hours)
+* checks mail on a fixed interval
 * saves new messages into a local backup repository
 * commits and pushes changes to GitHub when new mail is found
 
